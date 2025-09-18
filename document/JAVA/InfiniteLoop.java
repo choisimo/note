@@ -8,18 +8,21 @@ public class InfiniteLoop {
         String s = "Please give me the grade A!!!!!!!";
         
         boolean lock = false;
-
-        Long st = System.nanoTime();
-        System.out.println(st);
-
-        while (true) {                        
+        while (!lock)
+            {
+            while (true) {                        
             
-        if ((st % 2 == 0)){
-            break;
-        }
-
-        System.out.println(s);
-            continue;
+            Long st = System.nanoTime();
+            System.out.println(s);
+            
+            if ((st % 2 == 0)){
+                lock = true;
+                break;
+            } else {
+                lock = false;
+                    continue;
+                }
+            }
         }
     }     
 }

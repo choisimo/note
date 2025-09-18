@@ -3,7 +3,6 @@ public class Gugudan {
     public static void main (String[] args) 
     {
         int number;
-        int i = 1;
         int curLvl =2;
 
         System.out.println("Please enter a number: ");
@@ -12,10 +11,11 @@ public class Gugudan {
         number = input.nextInt();
         input.close();
 
-        while (curLvl <= 8)
+        while (curLvl <= number)
         {
+            int i = 1;
             while (i <= 9) {
-                System.out.println(number + "*" + i + "=" + number * i);
+                System.out.println(curLvl + "*" + i + "=" + curLvl * i);
                 i++;
             }
             curLvl++;
