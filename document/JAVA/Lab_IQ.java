@@ -1,3 +1,8 @@
+/**
+ * 연습 문제 1 
+ * 파일 이름 : Lab_IQ.java
+ */
+
 import java.util.Scanner;
 
 public class Lab_IQ {
