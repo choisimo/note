@@ -1,0 +1,4 @@
+# MergeSort
+Manifest-Version: 1.0
+Main-Class: Main
+Class-Path: lib/mergesort.jar lib/
