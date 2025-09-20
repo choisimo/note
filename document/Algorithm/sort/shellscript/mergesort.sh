@@ -1,5 +1,5 @@
 #!/bin/bash
 
 function printArr[] {
-    echo '';
+    if [ -z ] 
 }
