@@ -1,0 +1,12 @@
+* text=auto eol=lf
+
+# Ensure images and archives treated as binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.zip binary
+*.tar binary
+*.tar.gz binary
+*.rar binary
+*.7z binary
