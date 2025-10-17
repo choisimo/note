@@ -1,0 +1,82 @@
+# Root .gitignore for multi-language repo (Java, Gradle, C/C++, Python)
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+nohup.out
+
+# Editor/IDE
+# JetBrains IDEs (IntelliJ IDEA, Android Studio)
+**/.idea/
+*.iml
+*.ipr
+*.iws
+# Eclipse
+**/.project
+**/.classpath
+**/.settings/
+# VS Code
+.vscode/
+
+# Build outputs (common)
+**/build/
+**/out/
+**/bin/
+
+# Gradle
+**/.gradle/
+# Keep the Gradle wrapper JAR tracked
+!**/gradle/wrapper/gradle-wrapper.jar
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+hs_err_pid*
+replay_pid*
+*.hprof
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.python-version
+.mypy_cache/
+.pytest_cache/
+.coverage*
+htmlcov/
+.tox/
+.venv/
+venv/
+env/
+
+# C / C++
+*.o
+*.obj
+*.so
+*.dll
+*.dylib
+*.a
+*.lib
+*.la
+*.lo
+*.out
+*.exe
+*.dSYM/
+
+# Editor swap files
+*.swp
+*.swo
+*~
+
+# Archives
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
