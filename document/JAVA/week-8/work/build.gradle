@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.example.hello'   // 프로젝트 그룹(패키지명과 유사)
+version = '1.0.0'             // 프로젝트 버전
+
+repositories {
+    mavenCentral()            // 의존성(라이브러리) 다운로드 위치
+}
+
+sourceSets {
+    
+}
+
+dependencies {
+    implementation 'org.apache.commons:commons-lang3:3.12.0' // 런타임 의존성
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2' // 테스트 의존성
+}
+
+test {
+    useJUnitPlatform()        // JUnit5 테스트 플랫폼 사용
+}
