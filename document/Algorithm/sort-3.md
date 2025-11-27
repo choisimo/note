@@ -1,147 +1,117 @@
-## 힙 정렬 (Max Heap 기반)
+# Heap Sort (힙 정렬)
 
-### 1. 힙(Heap) 기본 성질
-- **완전 이진 트리(Complete Binary Tree)**: 마지막 레벨을 제외한 모든 레벨이 가득 차 있고, 마지막 레벨은 왼쪽부터 채워짐.
-- **Max Heap 조건**: 모든 부모 노드 값 ≥ 자식 노드 값.
-- 배열 인덱스 표현:
-  - Root: index 0
-  - Parent(i) = (i-1)//2
-  - Left(i) = 2*i + 1, Right(i) = 2*i + 2
+> **한 줄 요약**: 완전 이진 트리 기반의 힙(Heap) 자료구조를 이용하여 최댓값(또는 최솟값)을 반복적으로 추출하는 O(n log n) 정렬 알고리즘입니다.
 
-### 2. 완전 이진 트리를 배열로 쓰는 이유
-| 항목 | 장점 |
-|------|------|
-| 포인터 불필요 | 부모/자식 인덱스 산술식으로 접근 |
-| 공간 효율 | Node 객체/링크 오버헤드 제거 |
-| 캐시 이점 | 연속 메모리 (단, 힙 정렬 과정 후반엔 감소) |
+---
 
-### 3. Build Heap (Heapify Bottom-Up)
-마지막 비리프(Internal) 노드부터 0까지 내려오며 `percolateDown` (혹은 `siftDown`) 수행.
-- 마지막 비리프 노드 index = (n-2)//2
-- 전체 비용은 O(n). (높이별 작업량 합산 시 등비수열 수렴)
+## 1. 개념 (Concept)
 
-```text
-buildHeap(A, n):
-  for i from (n-2)//2 downto 0:
-    percolateDown(A, n, i)
+### 1.1 정의
+- **Heap**: 최댓값이나 최솟값을 빠르게 찾아내기 위해 고안된 완전 이진 트리(Complete Binary Tree)입니다.
+- **Max Heap**: 부모 노드의 키 값이 자식 노드의 키 값보다 항상 크거나 같은 힙입니다.
+- **Heap Sort**: 주어진 데이터를 힙으로 만든(Build Heap) 후, 루트(최댓값)를 꺼내 배열의 뒤쪽으로 보내는 과정을 반복하여 정렬합니다.
+
+### 1.2 핵심 원리 (Core Principles)
+배열을 완전 이진 트리로 해석하여 인덱스 연산만으로 부모-자식 관계를 다룹니다.
+
+- **인덱스 규칙 (0-based)**:
+    - `Parent(i) = (i-1) / 2`
+    - `Left Child(i) = 2*i + 1`
+    - `Right Child(i) = 2*i + 2`
+
+```mermaid
+graph TD
+    A((10)) --> B((5))
+    A --> C((8))
+    B --> D((2))
+    B --> E((4))
+    C --> F((7))
+    C --> G((1))
+    style A fill:#f9f,stroke:#333,stroke-width:4px
 ```
+*(Max Heap 예시: 루트 10이 가장 큼)*
 
-### 4. Percolate Down (Sift Down)
-```text
-percolateDown(A, heapSize, k):
-  while true:
-    left  = 2*k + 1
-    right = 2*k + 2
-    if left >= heapSize: break
+---
 
-    larger = left
-    if right < heapSize and A[right] > A[left]:
-      larger = right
+## 2. 구현 및 사용법 (Implementation)
 
-    if A[k] < A[larger]:
-      swap(A[k], A[larger])
-      k = larger
-    else:
-      break
-```
+### 2.1 알고리즘 단계
+1. **Build Heap**: 입력 배열을 Max Heap 상태로 만듭니다. (Bottom-up 방식, O(n))
+2. **Extract Max**: 루트(0번)와 마지막 원소를 교환(Swap)합니다.
+3. **Heapify (Percolate Down)**: 힙 크기를 1 줄이고, 새로운 루트를 적절한 위치로 내립니다.
+4. 힙 크기가 1이 될 때까지 2~3번을 반복합니다.
 
-### 5. Heap Sort 과정
-1. Build Heap (Max Heap)
-2. 루트(최대값) ↔ 마지막 원소 교환, heapSize 감소
-3. 감소된 heapSize 범위에서 root 재정렬(percolateDown)
-4. heapSize == 1 될 때까지 반복
-
+### 2.2 Pseudocode
 ```text
 heapSort(A, n):
-  buildHeap(A, n)
+  buildHeap(A, n)              // O(n)
   for end from n-1 downto 1:
-    swap(A[0], A[end])
-    percolateDown(A, end, 0)   # end가 새로운 heapSize
+    swap(A[0], A[end])         // 최댓값을 맨 뒤로
+    percolateDown(A, end, 0)   // 힙 속성 복구, O(log n)
 ```
 
-### 6. deleteMax 관점
-```text
-deleteMax(A, heapSize):
-  maxVal = A[0]
-  A[0] = A[heapSize-1]
-  heapSize--
-  percolateDown(A, heapSize, 0)
-  return maxVal
+### 2.3 Java 구현 예시
+```java
+public class HeapSort {
+    public void sort(int[] arr) {
+        int n = arr.length;
+
+        // 1. Build Heap
+        for (int i = n / 2 - 1; i >= 0; i--)
+            heapify(arr, n, i);
+
+        // 2. Extract elements
+        for (int i = n - 1; i > 0; i--) {
+            swap(arr, 0, i); // Move current root to end
+            heapify(arr, i, 0); // Call max heapify on the reduced heap
+        }
+    }
+
+    void heapify(int[] arr, int n, int i) {
+        int largest = i;
+        int l = 2 * i + 1;
+        int r = 2 * i + 2;
+
+        if (l < n && arr[l] > arr[largest]) largest = l;
+        if (r < n && arr[r] > arr[largest]) largest = r;
+
+        if (largest != i) {
+            swap(arr, i, largest);
+            heapify(arr, n, largest);
+        }
+    }
+    // swap 메서드 생략
+}
 ```
-Heap Sort는 `deleteMax`를 반복하여 정렬된 배열을 뒤에서부터 채우는 과정과 동일.
-
-### 7. 시간 복잡도 상세
-| 단계 | 복잡도 |
-|------|--------|
-| buildHeap | O(n) |
-| n번 deleteMax | n * O(log n) = O(n log n) |
-| 전체 | O(n log n) (best=avg=worst 동일) |
-
-Build 단계가 O(n) 인 이유:
-- 높이 h인 노드 수 ≈ n / 2^{h+1}, 각 노드 percolateDown 최대 O(h)
-- Σ (n / 2^{h+1}) * h  = O(n)
-
-### 8. 공간/특징
-| 항목 | 힙 정렬 |
-|------|---------|
-| In-place | 예 (O(1) 추가 메모리) |
-| 안정성 | 기본 비안정 (동일 값 상대 순서 변함) |
-| 캐시 지역성 | 낮음 (트리 구조 점프) |
-| 최악 성능 | O(n log n) 보장 |
-
-### 9. 힙 정렬 실무 사용 주의
-- 병합/퀵 대비 캐시 효율 낮아 실제 시간 느릴 수 있음.
-- 안정성이 필요한 경우 다른 알고리즘 고려.
-- 부분 정렬(Top-K)에서는 전체 정렬 대신 사이즈 K 힙 활용이 더 효율적 (O(n log K)).
-
-### 10. 예시 (단계 축약)
-A = [13, 5, 7, 2, 9]
-1) buildHeap → [13, 9, 7, 2, 5]
-2) swap root & last → [5, 9, 7, 2, 13]; heapSize=4 → percolateDown → [9, 5, 7, 2, 13]
-3) swap → [2, 5, 7, 9, 13]; heapSize=3 → percolateDown → [7, 5, 2, 9, 13]
-4) swap → [2, 5, 7, 9, 13]; heapSize=2 → percolateDown → [5, 2, 7, 9, 13]
-5) swap → [2, 5, 7, 9, 13] (완료)
 
 ---
-## 주요 정렬 알고리즘 비교 (개념 재정리)
 
-| 알고리즘 | 평균 | 최악 | 추가 메모리 | 안정성 | 특징 요약 |
-|----------|------|------|------------|--------|-----------|
-| 선택 정렬 | O(n^2) | O(n^2) | O(1) | 비안정 | 교환 최소, 항상 느림 |
-| 버블 정렬 | O(n^2) | O(n^2) | O(1) | 안정 | 거의 정렬된 경우 약간 이득 |
-| 삽입 정렬 | O(n^2) | O(n^2) | O(1) | 안정 | 거의 정렬/소규모 입력에 강함 |
-| 쉘 정렬 | ~O(n^{1.3}) | O(n^2) | O(1) | 비안정 | Gap 시퀀스에 따라 성능 편차 |
-| 합병 정렬 | O(n log n) | O(n log n) | O(n) | (구현 따라) 안정 | Divide & Conquer, 외부정렬 활용 |
-| 힙 정렬 | O(n log n) | O(n log n) | O(1) | 비안정 | 최악 보장, 캐시 약점 |
-| 퀵 정렬 | O(n log n) | O(n^2) | O(log n) stack | 비안정 | 평균 가장 빠름, 분할 품질 중요 |
-| 계수 정렬 | O(n + k) | O(n + k) | O(n + k) | 안정 | k 범위 작을 때 강력 |
-| 기수 정렬 | O(k n) | O(k n) | O(n + b) | 안정 | 고정 길이 키, 비교 안함 |
-| 버킷 정렬 | O(n) (평균) | O(n^2) | O(n + b) | (내부정렬 의존) | 균등 분포 가정 |
+## 3. 심화 (Deep Dive)
 
-### 선택 포인트
-| 조건 | 추천 |
-|------|------|
-| 안정성 + 큰 n | Merge, (Timsort 파생) |
-| 메모리 제약 | Heap, In-place Quick (주의) |
-| 평균 속도 | Quick (피벗 개선 + 하이브리드) |
-| 값 범위 작음 | Counting / Radix |
-| Top-K | Heap(Partial) / Quickselect |
-| 거의 정렬됨 | Insertion / Adaptive (Timsort) |
+### 3.1 시간 복잡도 (Time Complexity)
+| 단계 | 복잡도 | 설명 |
+| :--- | :--- | :--- |
+| **Build Heap** | **O(n)** | 하위 레벨 노드가 많지만 높이가 낮아 합산 시 O(n)에 수렴함 |
+| **Extract & Heapify** | **O(n log n)** | n개의 원소에 대해 높이(log n)만큼 이동 |
+| **전체 (Total)** | **O(n log n)** | Best, Average, Worst 모두 동일 |
 
-### 11. 용어 정리
-| 용어 | 의미 |
-|------|------|
-| Stable | 동일 키 상대 순서 유지 |
-| In-place | O(1) 추가 공간 (or 매우 작음) |
-| Divide & Conquer | 분할 → 정복 → 결합 패턴 |
-| Partition | 배열을 피벗 기준 두 부분으로 나누는 과정 |
-| Heapify | 힙 속성 재구축 (Sift Up/Down) |
-| External Sort | 메모리에 못 올리는 대용량 정렬 (Disk/Merge 단계) |
+### 3.2 공간 복잡도 및 특징
+- **In-place**: 추가 메모리가 거의 필요 없습니다(O(1)). 재귀 호출 스택 제외 시.
+- **Unstable**: 동일한 값의 순서가 보장되지 않습니다. (Swap 과정에서 뒤섞임)
+- **Cache Locality**: 배열 인덱스를 2배씩 점프하므로 캐시 적중률이 Quick/Merge Sort에 비해 낮습니다.
 
-### 12. Stirling 근사와 n! 관련 (참고)
-정렬 비교 하한 도출에 쓰이는 n! ~ sqrt(2πn) (n/e)^n → log2(n!) ≈ n log2 n - 1.44 n.
-- 비교 정렬은 최소 O(log2(n!)) ≈ O(n log n) 비교 필요.
-- 힙/퀵/병합이 O(n log n) 에 수렴하는 이유.
+### 3.3 vs 다른 정렬 알고리즘
+- **vs Quick Sort**: 퀵 정렬이 평균적으로 더 빠르지만(캐시 효율, 상수 계수), 힙 정렬은 최악의 경우에도 O(n log n)을 보장합니다.
+- **vs Merge Sort**: 병합 정렬은 O(n)의 추가 메모리가 필요하지만 Stable합니다.
 
 ---
-(End of sort-3 확장)
+
+## 4. 요약 및 체크리스트 (Summary)
+- [ ] **완전 이진 트리** 구조를 배열로 효율적으로 구현한다.
+- [ ] **Build Heap**은 O(n) 시간이 걸린다.
+- [ ] 전체 시간 복잡도는 항상 **O(n log n)**이다.
+- [ ] **불안정 정렬(Unstable Sort)**이며, 캐시 효율이 좋지 않다.
+- [ ] 우선순위 큐(Priority Queue) 구현의 기반이 된다.
+
+---
+*Ref: CLRS Chapter 6 (Heapsort)*
